@@ -45,3 +45,8 @@ Thumbs.db
 /提示词组合器.zip
 /便携包-免服务/
 /提示词随机组合器-跨平台免服务版.zip
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
