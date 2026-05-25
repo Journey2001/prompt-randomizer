@@ -1,16 +1,33 @@
 # Logs
 logs
 *.log
+.vite-dev*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies and build outputs
 node_modules
 dist
 dist-ssr
+coverage
+htmlcoverage
 *.local
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tool caches
+.cache
+.eslintcache
+
+# OS / editor temp files
+Thumbs.db
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +39,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local release artifacts
+/提示词组合器/
+/提示词组合器.zip
+/便携包-免服务/
+/提示词随机组合器-跨平台免服务版.zip

@@ -1,16 +1,182 @@
-# React + Vite
+# Prompt Randomizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个本地离线使用的提示词随机组合器。  
+你提供提示词模板、占位符词库文本，页面会自动识别占位符并随机组合出最终提示词，适合图像生成、角色设定、风格混搭这类需要反复试词的场景。
 
-Currently, two official plugins are available:
+## 项目特点
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 本地运行，不依赖后端服务
+- 自动识别模板中的占位符
+- 支持给每个占位符上传独立的 `.txt` 词库
+- 支持批量写入“已选值”，快速复现一组结果
+- 支持按随机结果生成，也支持按当前已选值直接拼装
+- 绑定关系和已选内容会缓存在浏览器 `localStorage`
+- 生产构建后可输出为单文件离线页面，支持直接双击 `index.html` 打开
 
-## React Compiler
+## 界面流程
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+页面按左右两栏组织：
 
-## Expanding the ESLint configuration
+1. 左侧输入提示词模板，并设置占位符样式
+2. 自动识别模板中的占位符
+3. 为每个占位符上传对应词库，或手动填写当前值
+4. 点击“随机生成”得到一组随机结果
+5. 点击“按已选组合”复用当前已选内容重新拼装
+6. 点击“复制结果”直接复制最终提示词
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 占位符规则
+
+默认占位符样式是 `[NAME]`，例如：
+
+```text
+一个[角色]，拥有[发型]，穿着[服装]，赛博朋克风格插画
+```
+
+应用会识别出：
+
+- `[角色]`
+- `[发型]`
+- `[服装]`
+
+你也可以把占位符样式改成别的格式，例如：
+
+- `{{NAME}}`
+- `<NAME>`
+- `【NAME】`
+
+只要样式里包含 `NAME` 这个标记，应用就会据此解析模板。
+
+## 词库文件要求
+
+- 文件格式：`.txt`
+- 编码：建议 `UTF-8`
+- 一行一个候选词条
+- 空行会被忽略
+
+示例：
+
+```text
+短发
+双马尾
+狼尾
+波浪卷
+```
+
+上传后，该占位符会从这些行里随机抽取一个值。
+
+## 批量赋值格式
+
+除了上传词库，也可以在“批量赋值”区域直接填写当前值。  
+推荐格式如下：
+
+```text
+[角色]: 女战士
+[发型]: 银色短发
+[服装]: 黑色风衣
+```
+
+说明：
+
+- 支持英文冒号 `:`
+- 支持中文冒号 `：`
+- 未匹配到当前模板占位符的行会被忽略
+- 值中的多余空白和结尾标点会被自动清理
+
+## 本地开发
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 启动开发环境
+
+```bash
+npm run dev
+```
+
+### 运行测试
+
+```bash
+npm run test
+```
+
+### 运行 ESLint
+
+```bash
+npm run lint
+```
+
+## 构建与离线分发
+
+项目基于 Vite 构建，并使用 `vite-plugin-singlefile` 将页面尽量收敛为适合离线分发的产物。
+
+### 生产构建
+
+```bash
+npm run build
+```
+
+构建后产物位于：
+
+- `dist/index.html`
+- `dist/favicon.svg`
+- `dist/icons.svg`
+
+其中 `dist/index.html` 可直接在本地以 `file://` 方式打开。
+
+## 项目脚本
+
+```json
+{
+  "dev": "vite",
+  "build": "vite build",
+  "lint": "eslint .",
+  "test": "node --test",
+  "preview": "vite preview"
+}
+```
+
+## 目录结构
+
+```text
+prompt-randomizer/
+├─ docs/                  文档与示例素材
+├─ public/                静态资源
+├─ src/
+│  ├─ assets/             界面图片资源
+│  ├─ lib/prompt.js       提示词解析与组合逻辑
+│  ├─ lib/prompt.test.js  核心逻辑测试
+│  ├─ App.jsx             主界面
+│  ├─ App.css             页面样式
+│  └─ main.jsx            应用入口
+├─ index.html
+├─ vite.config.js
+└─ package.json
+```
+
+## 文档
+
+- [跨平台免服务打包说明](./docs/%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%85%8D%E6%9C%8D%E5%8A%A1%E6%89%93%E5%8C%85%E8%AF%B4%E6%98%8E.md)
+- [提示词和图片示例](./docs/prompt-gallery/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%92%8C%E5%9B%BE%E7%89%87.md)
+- [提示词和图片示例（中文）](./docs/prompt-gallery/%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%92%8C%E5%9B%BE%E7%89%87-%E4%B8%AD%E6%96%87.md)
+
+## 技术栈
+
+- React 19
+- Vite 8
+- ESLint 10
+- `vite-plugin-singlefile`
+
+## 版本控制建议
+
+仓库已忽略以下本地产物：
+
+- `node_modules/`
+- `dist/`
+- 本地开发日志
+- `.env` 等环境文件
+- 便携包目录和打包生成的 `.zip`
+
+这样可以避免把依赖、构建结果和手工分发包误提交到仓库。
